@@ -1,13 +1,29 @@
-import { forwardRef } from 'react'
-import { Mesh, BoxGeometry, MeshBasicMaterial } from 'three'
+import { useMotionValue } from 'framer-motion'
+import { motion } from 'framer-motion-3d'
+import { useState } from 'react'
 
-type CubeType = Mesh<BoxGeometry, MeshBasicMaterial>
+function Cube() {
+  const x = useMotionValue(0)
 
-const Cube = forwardRef<CubeType>((_, ref) => (
-  <mesh ref={ref} position-x={2} castShadow>
-    <boxGeometry args={[1.5, 1.5, 1.5]} />
-    <meshStandardMaterial color={'mediumpurple'} />
-  </mesh>
-))
+  const [currentX, setCurrentX] = useState<number>(0)
+  const [delta, setDelta] = useState<number>(3)
+
+  return (
+    <motion.mesh
+      castShadow
+      position-x={x}
+      position-y={0.6}
+      animate={{ x: currentX }}
+      onPointerEnter={(e) => {
+        const nextX = Math.round(currentX + delta)
+        if (nextX <= -4 || nextX >= 4) setDelta((delta) => delta * -1)
+        setCurrentX(nextX)
+      }}
+    >
+      <boxGeometry args={[1, 1, 1]} />
+      <motion.meshStandardMaterial color={'mediumpurple'} />
+    </motion.mesh>
+  )
+}
 
 export { Cube }
